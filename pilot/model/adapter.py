@@ -12,12 +12,15 @@ from transformers import (
     AutoTokenizer,
     LlamaTokenizer,
 )
+from peft import (
+    PeftModel,
+)
 from pilot.model.parameter import (
     ModelParameters,
     LlamaCppModelParameters,
     ProxyModelParameters,
 )
-from pilot.configs.model_config import get_device
+from pilot.configs.model_config import LLM_CHECKPOINT, get_device
 from pilot.configs.config import Config
 from pilot.logs import logger
 
@@ -341,6 +344,11 @@ class BaichuanAdapter(BaseLLMAdaper):
             low_cpu_mem_usage=True,
             **from_pretrained_kwargs,
         )
+        checkpoint = LLM_CHECKPOINT['baichuan-13b']
+        logger.info(f'******************          load checkpoint {checkpoint} over          ******************')
+        if checkpoint:
+            model = PeftModel.from_pretrained(model, checkpoint)
+            model = model.merge_and_unload()
         return model, tokenizer
 
 
