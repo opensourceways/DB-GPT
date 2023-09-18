@@ -12,12 +12,10 @@
 # See the Mulan PSL v2 for more details.
 # Create: 2023/9/15
 
-from ast import Dict
 from dataclasses import asdict, dataclass, field
 from threading import Thread
 from types import MethodType
 from typing import Any, List, Optional, Tuple, Union
-import re
 
 import torch
 from transformers import PreTrainedModel, TextIteratorStreamer
