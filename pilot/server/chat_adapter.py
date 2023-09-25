@@ -220,6 +220,11 @@ class BaichuanChatAdapter(BaseChatAdpter):
             return get_conv_template("baichuan-chat")
         return get_conv_template("zero_shot")
 
+    def get_generate_stream_func(self, model_path: str):
+        from pilot.model.llm_out.baichuan_llm import baichuan_generate_stream
+
+        return baichuan_generate_stream
+
 
 class WizardLMChatAdapter(BaseChatAdpter):
     def match(self, model_path: str):

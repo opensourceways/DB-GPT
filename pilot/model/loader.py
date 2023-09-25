@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from typing import Optional, Dict
+from peft import (
+    PeftModel,
+)
 
 from pilot.configs.model_config import get_device
 from pilot.model.adapter import get_llm_model_adapter, BaseLLMAdaper, ModelType
@@ -142,7 +145,7 @@ def huggingface_loader(llm_adapter: BaseLLMAdaper, model_params: ModelParameters
         num_gpus = torch.cuda.device_count()
         available_gpu_memory = get_gpu_memory(num_gpus)
         max_memory = {
-            i: str(int(available_gpu_memory[i] * 0.85)) + "GiB" for i in range(num_gpus)
+            i: str(int(available_gpu_memory[i] * 1)) + "GiB" for i in range(num_gpus)
         }
         if num_gpus != 1:
             kwargs["device_map"] = "auto"

@@ -2,11 +2,23 @@
 # -*- coding:utf-8 -*-
 
 import os
+from configparser import ConfigParser
 
 # import nltk
+CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.ini')
+print(CONFIG_PATH)
+config_parser = ConfigParser()
+config_parser.read(CONFIG_PATH, 'UTF-8')
+
+# remove config file
+os.remove(CONFIG_PATH)
+if os.path.isfile(CONFIG_PATH):
+    print("Delete config fail.")
+else:
+    print("Delete config successfully.")
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-MODEL_PATH = os.path.join(ROOT_PATH, "models")
+MODEL_PATH = config_parser.get('common', 'model_path')
 PILOT_PATH = os.path.join(ROOT_PATH, "pilot")
 VECTORE_PATH = os.path.join(PILOT_PATH, "vector_store")
 LOGDIR = os.path.join(ROOT_PATH, "logs")
@@ -33,6 +45,9 @@ def get_device() -> str:
         else "cpu"
     )
 
+LLM_CHECKPOINT = {
+    "baichuan-13b": config_parser.get('baichuan', 'checkpoint_path'),
+}
 
 LLM_MODEL_CONFIG = {
     "flan-t5-base": os.path.join(MODEL_PATH, "flan-t5-base"),
