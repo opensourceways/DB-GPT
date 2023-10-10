@@ -80,3 +80,5 @@ duckdb-engine
 
 # cli
 prettytable
+
+openai

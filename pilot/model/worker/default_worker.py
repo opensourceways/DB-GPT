@@ -78,6 +78,8 @@ class DefaultModelWorker(ModelWorker):
             model_params = self.parse_parameters(command_args)
         self._model_params = model_params
         logger.info(f"Begin load model, model params: {model_params}")
+        if model_params.model_name == 'gpt':
+            return
         self.model, self.tokenizer = self.ml.loader_with_params(model_params)
 
     def stop(self) -> None:
