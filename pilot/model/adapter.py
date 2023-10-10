@@ -402,6 +402,12 @@ class LlamaCppAdapater(BaseLLMAdaper):
         )
         return model, tokenizer
 
+class GptAdapter(BaseLLMAdaper):
+    """The model adapter for gpt"""
+
+    def match(self, model_path: str):
+        return "gpt" in model_path.lower()
+
 
 register_llm_model_adapters(VicunaLLMAdapater)
 register_llm_model_adapters(ChatGLMAdapater)
@@ -413,6 +419,7 @@ register_llm_model_adapters(Llama2Adapter)
 register_llm_model_adapters(BaichuanAdapter)
 register_llm_model_adapters(WizardLMAdapter)
 register_llm_model_adapters(LlamaCppAdapater)
+register_llm_model_adapters(GptAdapter)
 # TODO Default support vicuna, other model need to tests and Evaluate
 
 # just for test_py, remove this later

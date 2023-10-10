@@ -20,6 +20,7 @@ from pilot.model.base import (
     WorkerApplyType,
 )
 from pilot.model.controller.registry import ModelRegistry
+from pilot.model.llm_out.gpt_llm import chat_gpt, chat_gpt_stream
 from pilot.model.parameter import ModelParameters, ModelWorkerParameters, WorkerType
 from pilot.model.worker.base import ModelWorker
 from pilot.scene.base_message import ModelMessage
@@ -532,6 +533,19 @@ async def api_worker_parameter_descs(
 ):
     output = await worker_manager.parameter_descriptions(worker_type, model)
     return output
+
+@router.post("/worker/completion")
+async def api_completion(request: Request):
+    params = await request.json()
+    question = params.get('question')
+    generator = chat_gpt(question)
+    return generator
+
+@router.post("/worker/completion_stream")
+async def api_completion(request: Request):
+    params = await request.json()
+    question = params.get('question')
+    return StreamingResponse(chat_gpt_stream(question, stream=True), media_type="text/event-stream")
 
 
 def _setup_fastapi(worker_params: ModelWorkerParameters):

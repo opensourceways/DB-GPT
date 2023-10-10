@@ -252,6 +252,13 @@ class LlamaCppChatAdapter(BaseChatAdpter):
         return generate_stream
 
 
+class GptChatAdapter(BaseChatAdpter):
+    """Model chat Adapter for gpt"""
+
+    def match(self, model_path: str):
+        return "gpt" in model_path.lower()
+
+
 register_llm_model_chat_adapter(VicunaChatAdapter)
 register_llm_model_chat_adapter(ChatGLMChatAdapter)
 register_llm_model_chat_adapter(GuanacoChatAdapter)
@@ -262,6 +269,7 @@ register_llm_model_chat_adapter(Llama2ChatAdapter)
 register_llm_model_chat_adapter(BaichuanChatAdapter)
 register_llm_model_chat_adapter(WizardLMChatAdapter)
 register_llm_model_chat_adapter(LlamaCppChatAdapter)
+register_llm_model_chat_adapter(GptChatAdapter)
 
 # Proxy model for test and develop, it's cheap for us now.
 register_llm_model_chat_adapter(ProxyllmChatAdapter)
