@@ -5,8 +5,8 @@ import os
 from configparser import ConfigParser
 
 # import nltk
-CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.ini')
-print(CONFIG_PATH)
+
+CONFIG_PATH = os.getenv("APPLICATION_PATH")
 config_parser = ConfigParser()
 config_parser.read(CONFIG_PATH, 'UTF-8')
 
