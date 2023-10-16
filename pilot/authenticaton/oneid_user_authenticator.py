@@ -19,12 +19,9 @@ from fastapi.responses import StreamingResponse
 
 from pilot.configs.model_config import config_parser
 from pilot.logs import logger
+from pilot.authenticaton.base_authenticator import BaseAuthenticator
 
-class OneidUserAuthenticator():
-    def __init__(self, func) -> None:
-        self.config = config_parser
-        self._func = func
-
+class OneidUserAuthenticator(BaseAuthenticator):
     def get_manage_token(self) -> str:
         manage_endponit = self.config.get('oneid_user_authentication', 'manage_endponit')
         app_id = self.config.get('oneid_user_authentication', 'app_id')
@@ -81,16 +78,3 @@ class OneidUserAuthenticator():
             print("Error: validate token fail. ", e)
 
         return "Unauthorized, please ensure that you have logged in."
-
-    def error_template(self, msg):
-        data = json.dumps({"answer": msg}, ensure_ascii=False)
-        yield f"data: {data}\n\n"
-
-    def __call__(self, request: Request):
-        msg = self.validate(request)
-        if msg != "success":
-            ret = StreamingResponse(self.error_template(msg), media_type="text/event-stream")
-            ret.status_code = 401
-            return ret
-        
-        return self._func(request)
