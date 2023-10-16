@@ -24,6 +24,8 @@ from pilot.model.llm_out.gpt_llm import chat_gpt, chat_gpt_stream
 from pilot.model.parameter import ModelParameters, ModelWorkerParameters, WorkerType
 from pilot.model.worker.base import ModelWorker
 from pilot.model.worker.cache_worker import generate_stream_with_cache
+from pilot.configs.model_config import config_parser
+from pilot.authenticaton.authenticator import Authenticator
 from pilot.scene.base_message import ModelMessage
 from pilot.utils import build_logger
 from pilot.utils.parameter_utils import EnvArgumentParser, ParameterDescription
@@ -508,6 +510,7 @@ async def api_generate_stream(request: Request):
     return StreamingResponse(generator)
 
 @router.post("/worker/generate_stream_with_cache")
+@Authenticator
 async def api_generate_stream_with_cache(request: Request):
     params = await request.json()
     try:
@@ -567,6 +570,7 @@ async def api_completion(request: Request):
     return StreamingResponse(chat_gpt_stream(question, stream=True), media_type="text/event-stream")
 
 @router.post("/worker/completion_stream_with_cache")
+@Authenticator
 async def api_completion(request: Request):
     params = await request.json()
     try:
@@ -574,7 +578,7 @@ async def api_completion(request: Request):
             for chunk in generate_stream_with_cache(
                 None,
                 use_openai=True,
-                api_key=os.getenv("OPENAI_KEY", None),
+                api_key=config_parser.get('gpt', 'openai_key'),
                 question=params.get("question")
             ):
                 content = ''
