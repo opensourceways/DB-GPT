@@ -20,15 +20,15 @@ from fastapi.responses import StreamingResponse
 from pilot.configs.model_config import config_parser
 from pilot.logs import logger
 
-class Authenticator():
+class OneidUserAuthenticator():
     def __init__(self, func) -> None:
         self.config = config_parser
         self._func = func
 
     def get_manage_token(self) -> str:
-        manage_endponit = self.config.get('authenticator', 'manage_endponit')
-        app_id = self.config.get('authenticator', 'app_id')
-        app_secret = self.config.get('authenticator', 'app_secret')
+        manage_endponit = self.config.get('oneid_user_authentication', 'manage_endponit')
+        app_id = self.config.get('oneid_user_authentication', 'app_id')
+        app_secret = self.config.get('oneid_user_authentication', 'app_secret')
         headers = {
             "Content-Type": "application/json"
         }
@@ -61,7 +61,7 @@ class Authenticator():
         if not manager_token:
             return "Unauthorized, please contact administrator."
 
-        valid_endponit = self.config.get('authenticator', 'oneid_user_endpoint')
+        valid_endponit = self.config.get('oneid_user_authentication', 'oneid_user_endpoint')
         headers = {
             "token": manager_token,
             "user-token": token,
