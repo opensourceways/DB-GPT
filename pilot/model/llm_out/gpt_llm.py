@@ -15,8 +15,9 @@
 import json
 import os
 import openai
+from pilot.configs.model_config import config_parser
 
-openai.api_key = os.getenv("OPENAI_KEY", None)
+openai.api_key = config_parser.get('gpt', 'openai_key')
 
 messages = [
         {"role": "system", "content": "You are a helpful assistant."},
