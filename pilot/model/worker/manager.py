@@ -25,7 +25,7 @@ from pilot.model.parameter import ModelParameters, ModelWorkerParameters, Worker
 from pilot.model.worker.base import ModelWorker
 from pilot.model.worker.cache_worker import generate_stream_with_cache
 from pilot.configs.model_config import config_parser
-from pilot.authenticaton.authenticator import Authenticator
+from pilot.authenticaton.oneid_user_authenticator import OneidUserAuthenticator
 from pilot.scene.base_message import ModelMessage
 from pilot.utils import build_logger
 from pilot.utils.parameter_utils import EnvArgumentParser, ParameterDescription
@@ -510,7 +510,7 @@ async def api_generate_stream(request: Request):
     return StreamingResponse(generator)
 
 @router.post("/worker/generate_stream_with_cache")
-@Authenticator
+@OneidUserAuthenticator
 async def api_generate_stream_with_cache(request: Request):
     params = await request.json()
     try:
@@ -570,7 +570,7 @@ async def api_completion(request: Request):
     return StreamingResponse(chat_gpt_stream(question, stream=True), media_type="text/event-stream")
 
 @router.post("/worker/completion_stream_with_cache")
-@Authenticator
+@OneidUserAuthenticator
 async def api_completion(request: Request):
     params = await request.json()
     try:
