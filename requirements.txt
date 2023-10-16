@@ -84,3 +84,4 @@ prettytable
 openai
 redis
 redis-om
+psycopg2
