@@ -27,9 +27,7 @@ messages = [
     ]
 
 
-def chat_gpt(question, model="gpt-3.5-turbo", stream=False):
-    message = {"role": "user", "content": question}
-    messages = [message]
+def chat_gpt(messages, model="gpt-3.5-turbo", stream=False):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -39,9 +37,7 @@ def chat_gpt(question, model="gpt-3.5-turbo", stream=False):
     return response
 
 
-def chat_gpt_stream(question, model="gpt-3.5-turbo", stream=True):
-    message = {"role": "user", "content": question}
-    messages = [message]
+def chat_gpt_stream(messages, model="gpt-3.5-turbo", stream=True):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,

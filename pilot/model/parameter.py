@@ -76,7 +76,7 @@ class ModelWorkerParameters(BaseParameters):
         default=None, metadata={"help": "The Model controller address to register"}
     )
     send_heartbeat: Optional[bool] = field(
-        default=True, metadata={"help": "Send heartbeat to model controller"}
+        default=False, metadata={"help": "Send heartbeat to model controller"}
     )
     heartbeat_interval: Optional[int] = field(
         default=20, metadata={"help": "The interval for sending heartbeats (seconds)"}

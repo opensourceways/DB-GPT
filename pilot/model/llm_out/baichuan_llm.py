@@ -30,8 +30,7 @@ from pilot.logs import logger
 
 from pilot.scene.base_message import ModelMessage, _parse_model_messages
 
-_CHATGLM_SEP = "\n"
-_CHATGLM2_SEP = "\n\n"
+EOS_TOKEN = "<reserved_102>"
 
 
 @torch.inference_mode()
@@ -40,8 +39,8 @@ def baichuan_generate_stream(
 ) :
 
     """Generate text using baichuan model"""
-    tokenizer.eos_token = "<reserved_102>"
-    tokenizer.add_special_tokens(dict(additional_special_tokens=["<reserved_102>"]))
+    tokenizer.eos_token = EOS_TOKEN
+    tokenizer.add_special_tokens(dict(additional_special_tokens=[EOS_TOKEN]))
 
     messages: List[ModelMessage] = params["messages"]
     query, system_messages, history = _parse_model_messages(messages)
@@ -61,7 +60,7 @@ def baichuan_generate_stream(
 def process_args(prompt, params, device, tokenizer):
     input_ids = tokenizer(prompt).input_ids
     if tokenizer.bos_token_id:
-        bos_ids = [tokenizer.bos_token_id] + [tokenizer.convert_tokens_to_ids("<reserved_102>")]
+        bos_ids = [tokenizer.bos_token_id] + [tokenizer.convert_tokens_to_ids(EOS_TOKEN)]
     else:
         bos_ids = []
 
