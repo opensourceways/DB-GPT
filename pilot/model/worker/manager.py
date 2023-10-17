@@ -537,15 +537,15 @@ async def api_worker_parameter_descs(
 @router.post("/worker/completion")
 async def api_completion(request: Request):
     params = await request.json()
-    question = params.get('question')
-    generator = chat_gpt(question)
+    messages = params.get('messages')
+    generator = chat_gpt(messages)
     return generator
 
 @router.post("/worker/completion_stream")
 async def api_completion(request: Request):
     params = await request.json()
-    question = params.get('question')
-    return StreamingResponse(chat_gpt_stream(question, stream=True), media_type="text/event-stream")
+    messages = params.get('messages')
+    return StreamingResponse(chat_gpt_stream(messages, stream=True), media_type="text/event-stream")
 
 
 def _setup_fastapi(worker_params: ModelWorkerParameters):
@@ -716,8 +716,11 @@ def run_worker_manager(
     if not embedded_mod:
         import uvicorn
 
+        log_config = uvicorn.config.LOGGING_CONFIG
+        log_config["formatters"]["access"]["fmt"] = "%(asctime)s | %(levelname)s | %(message)s"
+        log_config["formatters"]["default"]["fmt"] = "%(asctime)s | %(levelname)s | %(message)s"
         uvicorn.run(
-            app, host=worker_params.host, port=worker_params.port, log_level="info"
+            app, host=worker_params.host, port=worker_params.port, log_level="info", log_config=log_config
         )
 
 
