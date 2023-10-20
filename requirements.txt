@@ -85,3 +85,5 @@ openai
 redis
 redis-om
 psycopg2
+pyjwt
+pycryptodome
