@@ -26,6 +26,7 @@ from pilot.model.worker.base import ModelWorker
 from pilot.model.worker.cache_worker import generate_stream_with_cache
 from pilot.configs.model_config import config_parser
 from pilot.authenticaton.oneid_user_authenticator import OneidUserAuthenticator
+from pilot.authenticaton.app_authenticator import AppAuthenticator
 from pilot.scene.base_message import ModelMessage
 from pilot.utils import build_logger
 from pilot.utils.parameter_utils import EnvArgumentParser, ParameterDescription
@@ -503,7 +504,15 @@ async def generate_json_stream(params):
         yield json.dumps(asdict(output), ensure_ascii=False).encode() + b"\0"
 
 
+app_authenticator = AppAuthenticator()
+
+@router.get("/auth/get_tokens")
+async def api_get_tokens(request: Request):
+    tokens = app_authenticator.get_tokens(request)
+    return tokens
+
 @router.post("/worker/generate_stream")
+@AppAuthenticator
 async def api_generate_stream(request: Request):
     params = await request.json()
     generator = generate_json_stream(params)
@@ -564,6 +573,7 @@ async def api_completion(request: Request):
     return generator
 
 @router.post("/worker/completion_stream")
+@AppAuthenticator
 async def api_completion(request: Request):
     params = await request.json()
     messages = params.get('messages')

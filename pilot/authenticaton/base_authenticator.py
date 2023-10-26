@@ -15,7 +15,7 @@
 import json
 from abc import abstractmethod
 from fastapi import Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, Response
 
 from pilot.configs.model_config import config_parser
 
@@ -38,7 +38,7 @@ class BaseAuthenticator():
     def __call__(self, request: Request):
         msg = self.validate(request)
         if msg != "success":
-            ret = StreamingResponse(self.error_template(msg), media_type="text/event-stream")
+            ret = Response(msg)
             ret.status_code = 401
             return ret
         
