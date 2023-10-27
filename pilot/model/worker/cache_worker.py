@@ -37,6 +37,13 @@ from gptcache.embedding import Huggingface
 from gptcache.similarity_evaluation import ExactMatchEvaluation
 from gptcache.adapter.openai import ChatCompletion
 
+DEFAULT_QUESTION = [
+    {
+        "role": "user",
+        "content": "hello"
+    }
+]
+
 # data processor for baichuan model
 class BaichuanDataProcessor:
     @staticmethod
@@ -119,11 +126,9 @@ def update_cache_callback(llm_data, update_cache_func, *args, **kwargs):
 
 def generate_stream_with_cache(func, *args, **kwargs):
     if kwargs.get("use_openai", False):
-        message = {"role": "user", "content": kwargs.get("question", "")}
-        messages = [message]
         return ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=messages,
+            messages=kwargs.get("messages", DEFAULT_QUESTION),
             stream=True,
             cache_obj=cache
         )
