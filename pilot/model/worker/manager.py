@@ -589,7 +589,7 @@ async def api_completion(request: Request):
                 None,
                 use_openai=True,
                 api_key=config_parser.get('gpt', 'openai_key'),
-                question=params.get("question")
+                **params
             ):
                 content = ''
                 if "content" in chunk["choices"][0]["delta"]:
