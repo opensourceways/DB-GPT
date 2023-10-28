@@ -23,6 +23,7 @@ from pilot.model.controller.registry import ModelRegistry
 from pilot.model.llm_out.gpt_llm import chat_gpt, chat_gpt_stream
 from pilot.model.parameter import ModelParameters, ModelWorkerParameters, WorkerType
 from pilot.model.worker.base import ModelWorker
+from pilot.moderation.moderation import Moderation
 from pilot.scene.base_message import ModelMessage
 from pilot.utils import build_logger
 from pilot.utils.parameter_utils import EnvArgumentParser, ParameterDescription
@@ -489,7 +490,7 @@ class WorkerManagerAdapter(WorkerManager):
 
 worker_manager = WorkerManagerAdapter()
 router = APIRouter()
-
+moderation = Moderation()
 
 async def generate_json_stream(params):
     from starlette.concurrency import iterate_in_threadpool
@@ -538,13 +539,28 @@ async def api_worker_parameter_descs(
 async def api_completion(request: Request):
     params = await request.json()
     messages = params.get('messages')
+    for message in messages:
+        if not moderation.check_text(message.get('content')):
+            return "输入含有敏感词汇!"
     generator = chat_gpt(messages)
     return generator
+
+@router.post("/worker/moderation")
+async def api_moderation(request: Request):
+    params = await request.json()
+    content = params.get('content')
+    if moderation.check_text(content):
+        return "ok!"
+    else:
+        return "输入含有敏感词汇!"
 
 @router.post("/worker/completion_stream")
 async def api_completion(request: Request):
     params = await request.json()
     messages = params.get('messages')
+    for message in messages:
+        if not moderation.check_text(message.get('content')):
+            return StreamingResponse("输入含有敏感词汇!", media_type="text/event-stream")
     return StreamingResponse(chat_gpt_stream(messages, stream=True), media_type="text/event-stream")
 
 
