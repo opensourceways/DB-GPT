@@ -2,13 +2,15 @@
 # -*- coding:utf-8 -*-
 
 import os
-from configparser import ConfigParser
+from configparser import RawConfigParser, ConfigParser
 
 # import nltk
 
 CONFIG_PATH = os.getenv("APPLICATION_PATH")
 config_parser = ConfigParser()
 config_parser.read(CONFIG_PATH, 'UTF-8')
+raw_config_parser = RawConfigParser()
+raw_config_parser.read(CONFIG_PATH, 'UTF-8')
 
 # remove config file
 os.remove(CONFIG_PATH)
@@ -109,3 +111,15 @@ KNOWLEDGE_UPLOAD_ROOT_PATH = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "data"
 )
 KNOWLEDGE_CHUNK_SPLIT_SIZE = 100
+
+# Cache config
+DATASTORE_HOST = config_parser.get("cache", "datastore_host")
+DATASTORE_DBNAME = config_parser.get("cache", "datastore_dbname")
+DATASTORE_USERNAME = config_parser.get("cache", "datastore_username")
+DATASTORE_PASSWORD = raw_config_parser.get("cache", "datastore_password")
+
+VECTORSTORE_HOST = config_parser.get("cache", "vectorstore_host")
+VECTORSTORE_PORT = config_parser.get("cache", "vectorstore_port")
+VECTORSTORE_DBNAME = config_parser.get("cache", "vectorstore_dbname")
+VECTORSTORE_USERNAME = config_parser.get("cache", "vectorstore_username")
+VECTORSTORE_PASSWORD = raw_config_parser.get("cache", "vectorstore_password")

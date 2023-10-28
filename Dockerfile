@@ -17,6 +17,11 @@ RUN apt-get update && \
     pip install --upgrade pip && \
     pip3 install -r requirements.txt -i  https://pypi.tuna.tsinghua.edu.cn/simple
 
+RUN git clone -b 0.1.42 https://github.com/zilliztech/GPTCache.git && \
+    cd GPTCache && \
+    pip install -r requirements.txt && \
+    python setup.py install
+
 USER dbgpt
 
 CMD ["python", "pilot/server/llmserver.py"]
