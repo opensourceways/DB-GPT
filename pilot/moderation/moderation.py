@@ -35,7 +35,7 @@ class Moderation:
         self.redis_port = self.configs.getint('redis', 'redis_port')
         self.redis_db = self.configs.getint('redis', 'redis_db')
         self.redis_password = self.configs.get('redis', 'redis_password')
-        self.redis = redis.Redis(host=self.redis_host, port=self.redis_host, db=self.redis_db, password=self.redis_password)
+        self.redis = redis.Redis(host=self.redis_host, port=self.redis_port, db=self.redis_db, password=self.redis_password)
 
     def get_token(self, username, password, domain, project):
         token = self.redis.get('moderation_token')
