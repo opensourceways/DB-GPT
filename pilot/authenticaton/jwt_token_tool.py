@@ -42,7 +42,7 @@ class JwtTokenTool:
             )
             return encrypt_data(token, cls.rsa_public_key)
         except Exception as e:
-            logger.error("JWT generation fail", e)
+            logger.error("JWT generation fail", str(e))
     
     @classmethod
     def get_payload(cls, jwt_token, app_info):
@@ -53,7 +53,7 @@ class JwtTokenTool:
             data = jwt.decode(token,  app_secret+ cls.base_jwt_secret, ['HS256'])
             return data
         except Exception as e:
-            logger.error("JWT decryption fail", e)
+            logger.error("JWT decryption fail", str(e))
             return "RSA key is expired."
 
 def _random_str(length):

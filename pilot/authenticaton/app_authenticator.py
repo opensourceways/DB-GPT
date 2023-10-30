@@ -76,7 +76,7 @@ class AppAuthenticator(BaseAuthenticator):
 
             return [token, refresh_token]
         except Exception as e:
-            logger.error("create tokens error. ", e)
+            logger.error("create tokens error. ", str(e))
             return None
 
     def create_tokens_by_refresh_token(self, refresh_token) -> list[str]:
@@ -111,7 +111,7 @@ class AppAuthenticator(BaseAuthenticator):
 
             return [token, refresh_token]
         except Exception as e:
-            logger.error("create tokens error. ", e)
+            logger.error("create tokens error. ", str(e))
             return None
 
     def validate(self, request: Request) -> str:
@@ -133,7 +133,7 @@ class AppAuthenticator(BaseAuthenticator):
             return "success"
 
         except Exception as e:
-            logger.error("create tokens error. ", e)
+            logger.error("create tokens error. ", str(e))
             return "Validate token error."
 
     def _checkAppSecret(self, app_id, app_secret):
