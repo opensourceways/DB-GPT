@@ -22,8 +22,8 @@ from pilot.authenticaton.jwt_token_tool import JwtTokenTool, convert_str_to_dict
 from pilot.connections.redis import RedisConnector
 
 class AppAuthenticator(BaseAuthenticator):
-    def __init__(self, func=None) -> None:
-        super().__init__(func)
+    def __init__(self) -> None:
+        super().__init__()
         self.token_validity_period = self.config.get("app_authentication", "token_validity_period")
         self.refresh_token_validity_period = self.config.get("app_authentication", "refresh_token_validity_period")
         self.app_secret_dict = convert_str_to_dict(self.config.get("app_authentication", "app_secret_map"))

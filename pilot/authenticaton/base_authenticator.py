@@ -14,6 +14,7 @@
 
 import json
 from abc import abstractmethod
+from functools import wraps
 from fastapi import Request
 from fastapi.responses import StreamingResponse, Response
 
@@ -23,23 +24,26 @@ class BaseAuthenticator():
     '''
     use as decorator for interface authentication
     '''
-    def __init__(self, func) -> None:
+    def __init__(self) -> None:
         self.config = config_parser
-        self._func = func
 
     @abstractmethod
     def validate(self, request: Request) -> str:
         pass
-
+    
     def error_template(self, msg):
         data = json.dumps({"answer": msg}, ensure_ascii=False)
         yield f"data: {data}\n\n"
 
-    def __call__(self, request: Request):
-        msg = self.validate(request)
-        if msg != "success":
-            ret = Response(msg)
-            ret.status_code = 401
-            return ret
+    def call(self, func):
+        @wraps(func)
+        async def wrapper(request: Request):
+            msg = self.validate(request)
+            if msg != "success":
+                ret = Response(msg)
+                ret.status_code = 401
+                return ret
+            
+            return await func(request)
         
-        return self._func(request)
+        return wrapper

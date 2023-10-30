@@ -506,6 +506,7 @@ async def generate_json_stream(params):
 
 
 app_authenticator = AppAuthenticator()
+oneid_user_authenticator = OneidUserAuthenticator()
 
 @router.get("/auth/get_tokens")
 async def api_get_tokens(request: Request):
@@ -513,14 +514,14 @@ async def api_get_tokens(request: Request):
     return tokens
 
 @router.post("/worker/generate_stream")
-@AppAuthenticator
+@app_authenticator.call
 async def api_generate_stream(request: Request):
     params = await request.json()
     generator = generate_json_stream(params)
     return StreamingResponse(generator)
 
 @router.post("/worker/generate_stream_with_cache")
-@OneidUserAuthenticator
+@oneid_user_authenticator.call
 async def api_generate_stream_with_cache(request: Request):
     params = await request.json()
     try:
@@ -586,7 +587,7 @@ async def api_moderation(request: Request):
         return "输入含有敏感词汇!"
 
 @router.post("/worker/completion_stream")
-@AppAuthenticator
+@app_authenticator.call
 async def api_completion(request: Request):
     params = await request.json()
     messages = params.get('messages')
@@ -596,7 +597,7 @@ async def api_completion(request: Request):
     return StreamingResponse(chat_gpt_stream(messages, stream=True), media_type="text/event-stream")
 
 @router.post("/worker/completion_stream_with_cache")
-@OneidUserAuthenticator
+@oneid_user_authenticator.call
 async def api_completion(request: Request):
     params = await request.json()
     try:
