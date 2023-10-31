@@ -45,7 +45,7 @@ class OneidUserAuthenticator(BaseAuthenticator):
             return ""
 
     def validate(self, request: Request) -> str:
-        token = request.headers.get("HTTP_TOKEN")
+        token = request.headers.get("Authorization")
         logger.info(f"************ get token {token} *************")
         cookie_UT = request.cookies.get("_U_T_")
         logger.info(f"************ get token {cookie_UT} *************")
