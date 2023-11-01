@@ -87,3 +87,4 @@ redis-om
 psycopg2
 pyjwt
 pycryptodome
+tiktoken
