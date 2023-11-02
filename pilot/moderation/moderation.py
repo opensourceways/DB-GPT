@@ -15,9 +15,9 @@
 import json
 import logging
 import requests
-import redis
 
 from pilot.configs.model_config import config_parser
+from pilot.connections.redis import RedisConnector
 
 logger = logging.getLogger("model_worker")
 
@@ -35,10 +35,9 @@ class Moderation:
         self.redis_port = self.configs.getint('redis', 'redis_port')
         self.redis_db = self.configs.getint('redis', 'redis_db')
         self.redis_password = self.configs.get('redis', 'redis_password')
-        self.redis = redis.Redis(host=self.redis_host, port=self.redis_port, db=self.redis_db, password=self.redis_password)
 
     def get_token(self, username, password, domain, project):
-        token = self.redis.get('moderation_token')
+        token = RedisConnector.get('moderation_token')
         if token:
             return token
 
@@ -72,7 +71,7 @@ class Moderation:
         }     
         response = requests.post(url=self.token_url, data=json.dumps(token_data), headers=headers)
         token = response.headers.get("X-Subject-Token")
-        self.redis.set('moderation_token', token, 36000)
+        RedisConnector.put('moderation_token', token, 36000)
         logger.info('...refresh token succeed...')
         return token
 
