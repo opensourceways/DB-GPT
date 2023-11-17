@@ -19,8 +19,8 @@ from pilot.configs.model_config import config_parser
 from pilot.logs import logger
 
 openai.api_key = config_parser.get('gpt', 'openai_key')
-retry_time = config_parser.get('gpt', 'retry_time')
-retry_interval = config_parser.get('gpt', 'retry_interval')
+retry_time = config_parser.getint('gpt', 'retry_time')
+retry_interval = config_parser.getint('gpt', 'retry_interval')
 
 messages = [
         {"role": "system", "content": "You are a helpful assistant."},
