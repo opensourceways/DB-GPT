@@ -81,7 +81,7 @@ duckdb-engine
 # cli
 prettytable
 
-openai
+openai==0.28
 redis
 redis-om
 psycopg2
