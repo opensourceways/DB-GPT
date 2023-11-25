@@ -48,8 +48,8 @@ def retry_handler(func):
             while fun_num < retry_time:
                 try:
                     fun_num += 1
-                    logger.info("retry " + str(func.__name__) + ":" + str(fun_num) + "次")
                     logger.info("openai error:" + str(ex))
+                    logger.info("retry " + str(func.__name__) + ":" + str(fun_num) + "次")                   
                     time.sleep(retry_interval)
                     if 'retry' not in args:
                         response = warp(*args, "retry", **kwargs)
@@ -75,10 +75,12 @@ def retry_handler(func):
 
 
 @retry_handler
-def chat_gpt(messages, model="gpt-3.5-turbo", stream=False):
+def chat_gpt(messages, model="gpt-3.5-turbo", temperature=0.1, top_p=1, stream=False):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
+        temperature=temperature,
+        top_p=top_p,
         stream=stream
     )
     response = response['choices'][0]['message']['content']
@@ -86,10 +88,12 @@ def chat_gpt(messages, model="gpt-3.5-turbo", stream=False):
 
 
 @retry_handler
-def chat_gpt_stream(messages, model="gpt-3.5-turbo", stream=True):
+def chat_gpt_stream(messages, model="gpt-3.5-turbo", temperature=0.1, top_p=1, stream=True):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
+        temperature=temperature,
+        top_p=top_p,
         stream=stream
     )
     for chunk in response:

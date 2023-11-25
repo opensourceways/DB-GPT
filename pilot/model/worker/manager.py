@@ -571,10 +571,13 @@ async def api_worker_parameter_descs(
 async def api_completion(request: Request):
     params = await request.json()
     messages = params.get('messages')
+    model = params.get('model')
+    temperature = params.get('temperature')
+    top_p = params.get('top_p')
     for message in messages:
         if not moderation.check_text(message.get('content')):
             return "输入含有敏感词汇!"
-    generator = chat_gpt(messages)
+    generator = chat_gpt(messages, model, temperature, top_p)
     return generator
 
 @router.post("/worker/moderation")
@@ -591,10 +594,13 @@ async def api_moderation(request: Request):
 async def api_completion(request: Request):
     params = await request.json()
     messages = params.get('messages')
+    model = params.get('model')
+    temperature = params.get('temperature')
+    top_p = params.get('top_p')
     for message in messages:
         if not moderation.check_text(message.get('content')):
             return StreamingResponse("输入含有敏感词汇!", media_type="text/event-stream")
-    return StreamingResponse(chat_gpt_stream(messages, stream=True), media_type="text/event-stream")
+    return StreamingResponse(chat_gpt_stream(messages, model, temperature, top_p, stream=True), media_type="text/event-stream")
 
 @router.post("/worker/completion_stream_with_cache")
 @oneid_user_authenticator.call
