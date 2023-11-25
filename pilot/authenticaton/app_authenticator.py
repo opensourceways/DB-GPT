@@ -50,7 +50,7 @@ class AppAuthenticator(BaseAuthenticator):
                 "refresh_token": tokens[1],
                 "refresh_token_validity_period": self.refresh_token_validity_period
             }
-            return str(res)
+            return res
         else:
             return "Gnerate token error."
 
