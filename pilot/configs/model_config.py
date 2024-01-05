@@ -51,6 +51,11 @@ LLM_CHECKPOINT = {
     "baichuan-13b": config_parser.get('baichuan', 'checkpoint_path'),
 }
 
+EOS_TOKEN = {
+    "baichuan-13b": "<reserved_102>",
+    "baichuan2-13b": "<reserved_106>"
+}
+
 LLM_MODEL_CONFIG = {
     "flan-t5-base": os.path.join(MODEL_PATH, "flan-t5-base"),
     "vicuna-13b": os.path.join(MODEL_PATH, "vicuna-13b"),

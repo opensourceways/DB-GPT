@@ -20,7 +20,7 @@ from pilot.model.parameter import (
     LlamaCppModelParameters,
     ProxyModelParameters,
 )
-from pilot.configs.model_config import LLM_CHECKPOINT, get_device
+from pilot.configs.model_config import EOS_TOKEN, LLM_CHECKPOINT, get_device
 from pilot.configs.config import Config
 from pilot.logs import logger
 
@@ -349,6 +349,7 @@ class BaichuanAdapter(BaseLLMAdaper):
         if checkpoint:
             model = PeftModel.from_pretrained(model, checkpoint)
             model = model.merge_and_unload()
+        tokenizer.eos_token = EOS_TOKEN.get(CFG.LLM_MODEL)
         return model, tokenizer
 
 
