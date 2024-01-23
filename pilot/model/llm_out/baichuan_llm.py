@@ -57,6 +57,8 @@ def baichuan_generate_stream(
 
 def process_args(prompt, params, device, tokenizer):
     input_ids = tokenizer(prompt).input_ids
+    if len(input_ids) == 1:
+        input_ids = input_ids + tokenizer(' ').input_ids
     if tokenizer.bos_token_id:
         bos_ids = [tokenizer.bos_token_id] + [tokenizer.convert_tokens_to_ids(tokenizer.eos_token)]
     else:

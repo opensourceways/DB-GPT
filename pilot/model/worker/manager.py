@@ -13,6 +13,7 @@ from typing import Awaitable, Callable, Dict, Iterator, List, Optional
 from fastapi import APIRouter, FastAPI, Request, HTTPException
 from fastapi.responses import StreamingResponse
 from pilot.configs.model_config import LOGDIR
+from pilot.elasticsearch.es_client import ESClient
 from pilot.model.base import (
     ModelInstance,
     ModelOutput,
@@ -502,23 +503,42 @@ async def generate_json_stream(params):
     async for output in worker_manager.generate_stream(
         params, async_wrapper=iterate_in_threadpool
     ):
-        yield json.dumps(asdict(output), ensure_ascii=False).encode() + b"\0"
-
+        yield output
 
 app_authenticator = AppAuthenticator()
 oneid_user_authenticator = OneidUserAuthenticator()
+es_client = ESClient()
 
 @router.get("/auth/get_tokens")
 async def api_get_tokens(request: Request):
     tokens = app_authenticator.get_tokens(request)
     return tokens
 
-@router.post("/worker/generate_stream")
+@router.post("/worker/generate_stream_app")
 @app_authenticator.call
+async def api_generate_stream_app(request: Request):
+    params = await request.json()
+    messages = params.get('messages')
+    for message in messages:
+        if message.get('role') == 'human' and not moderation.check_text(message.get('content')):
+            return "输入含有敏感词汇!"
+        if message.get('role') == 'human' and not es_client.check_whitelist(message.get('content')):
+            return "未找到相关信息"
+    generator = generate_json_stream(params)
+    return StreamingResponse(generator, media_type="text/event-stream")
+
+@router.post("/worker/generate_stream")
+@oneid_user_authenticator.call
 async def api_generate_stream(request: Request):
     params = await request.json()
+    messages = params.get('messages')
+    for message in messages:
+        if message.get('role') == 'human' and not moderation.check_text(message.get('content')):
+            return "输入含有敏感词汇!"
+        if message.get('role') == 'human' and not es_client.check_whitelist(message.get('content')):
+            return "未找到相关信息"
     generator = generate_json_stream(params)
-    return StreamingResponse(generator)
+    return StreamingResponse(generator, media_type="text/event-stream")
 
 @router.post("/worker/generate_stream_with_cache")
 @oneid_user_authenticator.call
@@ -536,7 +556,7 @@ async def api_generate_stream_with_cache(request: Request):
             ):
                 yield json.dumps(asdict(response), ensure_ascii=False).encode() + b"\0"
 
-        return StreamingResponse(generate_json_stream_with_cache())
+        return StreamingResponse(generate_json_stream_with_cache(), media_type="text/event-stream")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AIGC ERROR: {e}")
 
