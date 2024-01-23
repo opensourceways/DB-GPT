@@ -24,7 +24,8 @@ from pilot.configs.model_config import (
     VECTORSTORE_PORT,
     VECTORSTORE_DBNAME,
     VECTORSTORE_USERNAME,
-    VECTORSTORE_PASSWORD
+    VECTORSTORE_PASSWORD,
+    EMBEDDING_MODEL_PATH
 )
 from pilot.model.base import ModelOutput
 
@@ -80,7 +81,7 @@ class BaichuanDataProcessor:
 cache = Cache()
 mysql_url = f"mysql+pymysql://{DATASTORE_USERNAME}:{urlquote(DATASTORE_PASSWORD)}@{DATASTORE_HOST}:3306/{DATASTORE_DBNAME}"
 postgres_url = f"postgresql://{VECTORSTORE_USERNAME}:{urlquote(VECTORSTORE_PASSWORD)}@{VECTORSTORE_HOST}:{VECTORSTORE_PORT}/{VECTORSTORE_DBNAME}"
-embedding_model=Huggingface()
+embedding_model=Huggingface(EMBEDDING_MODEL_PATH)
 generator_type = BaichuanDataProcessor
 init_similar_cache(
     cache_obj=cache,

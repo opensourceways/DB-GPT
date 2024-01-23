@@ -1,3 +1,4 @@
+import json
 import logging
 import platform
 from typing import Dict, Iterator, List
@@ -110,12 +111,13 @@ class DefaultModelWorker(ModelWorker):
                     # Do not print the model output, because it may contain Emoji, there is a problem with the GBK encoding
                     pass
                 else:
-                    print("output: ", output)
-                # return some model context to dgt-server
-                model_output = ModelOutput(
-                    text=output, error_code=0, model_context=model_context
-                )
-                yield model_output
+                    logger.info(f"output: {output}")
+                
+                model_output = json.dumps({"answer": output}, ensure_ascii=False)
+                yield f"data: {model_output}\n\n"
+
+            model_output = json.dumps({"type": "end"}, ensure_ascii=False)
+            yield f"data: {model_output}\n\n"
 
         except torch.cuda.CudaError:
             model_output = ModelOutput(

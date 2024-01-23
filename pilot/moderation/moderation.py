@@ -37,7 +37,7 @@ class Moderation:
         self.redis_password = self.configs.get('redis', 'redis_password')
 
     def get_token(self, username, password, domain, project):
-        token = RedisConnector.get('moderation_token')
+        token = RedisConnector.get('moderation_token_autogpt')
         if token:
             return token
 
@@ -70,9 +70,12 @@ class Moderation:
             }
         }     
         response = requests.post(url=self.token_url, data=json.dumps(token_data), headers=headers)
-        token = response.headers.get("X-Subject-Token")
-        RedisConnector.put('moderation_token', token, 36000)
-        logger.info('...refresh token succeed...')
+        if response.status_code == 201:
+            token = response.headers.get("X-Subject-Token")
+            RedisConnector.put('moderation_token_autogpt', token, 36000)
+            logger.info('...refresh token succeed...')
+        else:
+            logger.info('...create moderation token failed...')
         return token
 
     def check_text(self, text):

@@ -21,6 +21,7 @@ else:
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODEL_PATH = config_parser.get('common', 'model_path')
+EMBEDDING_MODEL_PATH = config_parser.get('embedding', 'model_path')
 PILOT_PATH = os.path.join(ROOT_PATH, "pilot")
 VECTORE_PATH = os.path.join(PILOT_PATH, "vector_store")
 LOGDIR = os.path.join(ROOT_PATH, "logs")
