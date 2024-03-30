@@ -35,7 +35,7 @@ RUN chmod -R 777 /home/dbgpt
 ENV PYTHONUNBUFFERED=1
 ENV APPLICATION_PATH=/vault/secrets/config.ini
 
-RUN pip3 install --default-timeout=1000 --upgrade pip \
+RUN pip3 install --default-timeout=10000 --upgrade pip \
     && pip3 install -r requirements.txt -i  https://pypi.tuna.tsinghua.edu.cn/simple
 
 RUN git clone -b 0.1.42 https://github.com/zilliztech/GPTCache.git && \
