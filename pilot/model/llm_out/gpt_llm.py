@@ -18,9 +18,12 @@ import openai
 from pilot.configs.model_config import config_parser
 from pilot.logs import logger
 
-openai.api_key = config_parser.get('gpt', 'openai_key')
+api_key = config_parser.get('gpt', 'openai_key')
+base_url = config_parser.get('gpt', 'base_url')
 retry_time = config_parser.getint('gpt', 'retry_time')
 retry_interval = config_parser.getint('gpt', 'retry_interval')
+
+client = openai.OpenAI(api_key = api_key, base_url = base_url)
 
 messages = [
         {"role": "system", "content": "You are a helpful assistant."},
@@ -76,20 +79,20 @@ def retry_handler(func):
 
 @retry_handler
 def chat_gpt(messages, model="gpt-3.5-turbo", temperature=0.1, top_p=1, stream=False):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=model,
         messages=messages,
         temperature=temperature,
         top_p=top_p,
         stream=stream
     )
-    response = response['choices'][0]['message']['content']
+    response = response.choices[0].message.content
     return response
 
 
 @retry_handler
 def chat_gpt_stream(messages, model="gpt-3.5-turbo", temperature=0.1, top_p=1, stream=True):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=model,
         messages=messages,
         temperature=temperature,
@@ -98,7 +101,7 @@ def chat_gpt_stream(messages, model="gpt-3.5-turbo", temperature=0.1, top_p=1, s
     )
     for chunk in response:
         content = ''
-        if "content" in chunk["choices"][0]["delta"]:
-            content = chunk["choices"][0]["delta"]["content"]
+        if chunk.choices[0].delta.content:
+            content = chunk.choices[0].delta.content
             data = json.dumps({"answer": content}, ensure_ascii=False)
             yield f"data: {data}\n"
