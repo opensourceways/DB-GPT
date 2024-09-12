@@ -10,7 +10,7 @@ async-timeout==4.0.2
 # filelock==3.9.0
 fonttools==4.43.0
 frozenlist==1.3.3
-huggingface-hub==0.14.1
+huggingface-hub
 importlib-resources==5.12.0
 
 sqlparse==0.4.4
@@ -28,7 +28,7 @@ tqdm==4.64.1
 transformers>=4.31.0
 transformers_stream_generator
 # timm==0.6.13
-spacy==3.5.3
+spacy
 webdataset==0.2.48
 yarl==1.8.2
 zipp==3.14.0
@@ -42,7 +42,7 @@ cpm_kernels
 umap-learn
 # notebook
 gradio==4.19.2
-gradio-client==0.0.8
+gradio-client==0.10.1
 # wandb
 # llama-index==0.5.27
 
@@ -81,10 +81,11 @@ duckdb-engine
 # cli
 prettytable
 
-openai==0.28
+openai==1.3.7
 redis
 redis-om
 psycopg2
 pyjwt
 pycryptodome
 tiktoken
+sentencepiece

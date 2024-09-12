@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Mapping, Optional, Set, Union
 
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, Extra, Field, model_validator
 
 from pilot.out_parser.base import BaseOutputParser
 from pilot.prompts.base import PromptValue
@@ -105,7 +105,7 @@ class BasePromptTemplate(BaseModel, ABC):
     def format_prompt(self, **kwargs: Any) -> PromptValue:
         """Create Chat Messages."""
 
-    @root_validator()
+    @model_validator(mode='before')
     def validate_variable_names(cls, values: Dict) -> Dict:
         """Validate variable names do not include restricted names."""
         if "stop" in values["input_variables"]:
@@ -278,7 +278,7 @@ class PromptTemplate(StringPromptTemplate):
         kwargs = self._merge_partial_and_user_variables(**kwargs)
         return DEFAULT_FORMATTER_MAPPING[self.template_format](self.template, **kwargs)
 
-    @root_validator()
+    @model_validator(mode='before')
     def template_is_valid(cls, values: Dict) -> Dict:
         """Check that template and input variables are consistent."""
         if values["validate_template"]:

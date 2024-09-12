@@ -25,7 +25,6 @@ from pilot.model.llm_out.gpt_llm import chat_gpt, chat_gpt_stream
 from pilot.model.parameter import ModelParameters, ModelWorkerParameters, WorkerType
 from pilot.model.worker.base import ModelWorker
 from pilot.moderation.moderation import Moderation
-from pilot.model.worker.cache_worker import generate_stream_with_cache
 from pilot.configs.model_config import config_parser
 from pilot.authenticaton.oneid_user_authenticator import OneidUserAuthenticator
 from pilot.authenticaton.app_authenticator import AppAuthenticator
@@ -540,25 +539,6 @@ async def api_generate_stream(request: Request):
     generator = generate_json_stream(params)
     return StreamingResponse(generator, media_type="text/event-stream")
 
-@router.post("/worker/generate_stream_with_cache")
-@oneid_user_authenticator.call
-async def api_generate_stream_with_cache(request: Request):
-    params = await request.json()
-    try:
-        async def generate_json_stream_with_cache():
-            from starlette.concurrency import iterate_in_threadpool
-
-            async for response in generate_stream_with_cache(
-                worker_manager.generate_stream,
-                params, 
-                async_wrapper=iterate_in_threadpool, 
-                **params
-            ):
-                yield json.dumps(asdict(response), ensure_ascii=False).encode() + b"\0"
-
-        return StreamingResponse(generate_json_stream_with_cache(), media_type="text/event-stream")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AIGC ERROR: {e}")
 
 @router.post("/worker/generate")
 async def api_generate(request: PromptRequest):
@@ -622,27 +602,6 @@ async def api_completion(request: Request):
             return StreamingResponse("输入含有敏感词汇!", media_type="text/event-stream")
     return StreamingResponse(chat_gpt_stream(messages, model, temperature, top_p, stream=True), media_type="text/event-stream")
 
-@router.post("/worker/completion_stream_with_cache")
-@oneid_user_authenticator.call
-async def api_completion(request: Request):
-    params = await request.json()
-    try:
-        def generate_json_stream_with_cache():
-            for chunk in generate_stream_with_cache(
-                None,
-                use_openai=True,
-                api_key=config_parser.get('gpt', 'openai_key'),
-                **params
-            ):
-                content = ''
-                if "content" in chunk["choices"][0]["delta"]:
-                    content = chunk["choices"][0]["delta"]["content"]
-                    data = json.dumps({"answer": content}, ensure_ascii=False)
-                    yield f"data: {data}\n"
-
-        return StreamingResponse(generate_json_stream_with_cache(), media_type="text/event-stream")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AIGC ERROR: {e}")
 
 def _setup_fastapi(worker_params: ModelWorkerParameters):
     app = FastAPI()
