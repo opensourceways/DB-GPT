@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Tuple, Optional
 
-from pydantic import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, model_validator
 
 
 class PromptValue(BaseModel, ABC):
@@ -101,10 +101,12 @@ class Generation(BaseModel):
 class ChatGeneration(Generation):
     """Output of a single generation."""
 
-    text = ""
+    text: str
     message: BaseMessage
 
-    @root_validator
+    text = ""
+
+    @model_validator(mode='before')
     def set_text(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         values["text"] = values["message"].content
         return values

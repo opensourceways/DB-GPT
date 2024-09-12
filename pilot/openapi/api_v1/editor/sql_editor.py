@@ -1,5 +1,5 @@
 from typing import List
-from pydantic import BaseModel, Field, root_validator, validator, Extra
+from pydantic import BaseModel, Field, model_validator, validator, Extra
 from pilot.scene.chat_dashboard.data_preparation.report_schma import ValueItem
 
 

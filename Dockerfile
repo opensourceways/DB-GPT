@@ -38,11 +38,6 @@ ENV APPLICATION_PATH=/vault/secrets/config.ini
 RUN pip3 install --default-timeout=10000 --upgrade pip \
     && pip3 install -r requirements.txt -i  https://pypi.tuna.tsinghua.edu.cn/simple
 
-RUN git clone -b 0.1.42 https://github.com/zilliztech/GPTCache.git && \
-    cd GPTCache && \
-    pip3 install -r requirements.txt && \
-    python3 setup.py install
-
 USER dbgpt
 
 CMD ["python3", "pilot/server/llmserver.py"]
