@@ -5,7 +5,7 @@ import sqlparse
 import regex as re
 
 from typing import Any, Iterable, List, Optional
-from pydantic import BaseModel, Field, root_validator, validator, Extra
+from pydantic import BaseModel, Field, model_validator, validator, Extra
 from abc import ABC, abstractmethod
 import sqlalchemy
 from sqlalchemy import (
